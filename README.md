@@ -1,3 +1,10 @@
+# Azure Config Store
+
+This repository contains Terraform scripts to set up and manage an Azure configuration store with a structured deployment process using GitHub Actions.
+
+## Project Structure
+
+```plaintext
 azure-config-store/
 ├── .github/
 │   └── workflows/
