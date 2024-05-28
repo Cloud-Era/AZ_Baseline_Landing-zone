@@ -1,75 +1,60 @@
-# Azure Config Store
+# Azure Infrastructure Terraform
 
-This repository contains Terraform scripts to set up and manage an Azure configuration store with a structured deployment process using GitHub Actions.
+This repository contains Terraform configurations for deploying Azure infrastructure.
 
-## Project Structure
+## Folder Structure
 
-```plaintext
+- `.github/workflows`: Contains GitHub Actions workflows.
+- `environments`: Contains environment-specific Terraform configurations.
+- `modules`: Contains reusable Terraform modules.
+- `.gitignore`: Specifies intentionally untracked files to ignore.
+- `README.md`: Provides an overview of the repository.
+
+## Usage
+
+1. Update Azure credentials in GitHub Secrets.
+2. Modify Terraform configurations as needed.
+3. Commit and push changes to trigger GitHub Actions workflows for deploying infrastructure.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+
+
+
+
+
 azure-config-store/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml
-├── terraform/
-│   ├── backend_config.tf
-│   ├── main.tf
-│   ├── locals.tf
-│   ├── providers.tf
-│   ├── variables.tf
-│   └── modules/
-│       ├── resource_group/
-│       │   ├── main.tf
-│       │   ├── variables.tf
-│       │   └── outputs.tf
-│       ├── virtual_network/
-│       │   ├── main.tf
-│       │   ├── variables.tf
-│       │   └── outputs.tf
-│       └── subnet/
-│           ├── main.tf
-│           ├── variables.tf
-│           └── outputs.tf
-└── azure-config.json
-
-
-
-=============================================================================================================================================================================================
-=============================================================================================================================================================================================
-=============================================================================================================================================================================================
-=============================================================================================================================================================================================
-=============================================================================================================================================================================================
-====================
-.
-├── .github
-│   └── workflows
-│       └── deploy.yml
-├── environments
-│   ├── dev
-│   │   ├── main.tf
+├── environments/
+│   ├── dev/
 │   │   ├── backend.tf
-│   │   └── variables.tf
-│   ├── prod
 │   │   ├── main.tf
-│   │   ├── backend.tf
 │   │   └── variables.tf
-│   └── stage
-│       ├── main.tf
+│   ├── prod/
+│   │   ├── backend.tf
+│   │   ├── main.tf
+│   │   └── variables.tf
+│   └── stage/
 │       ├── backend.tf
+│       ├── main.tf
 │       └── variables.tf
-├── modules
-│   ├── landing_zone
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-│   │   └── versions.tf
-│   ├── network
+├── modules/
+│   ├── landing_zone/
 │   │   ├── main.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
-│   └── rbac
+│   ├── network/
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── rbac/
 │       ├── main.tf
 │       ├── outputs.tf
 │       └── variables.tf
-├── main.tf
-├── providers.tf
-└── variables.tf
-
+├── .gitignore
+└── README.md
