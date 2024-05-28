@@ -1,4 +1,3 @@
-# AZ_Baseline_Landing-zone
 azure-config-store/
 ├── .github/
 │   └── workflows/
@@ -23,4 +22,3 @@ azure-config-store/
 │           ├── variables.tf
 │           └── outputs.tf
 └── azure-config.json
-``
