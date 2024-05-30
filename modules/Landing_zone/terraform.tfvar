@@ -1,34 +1,47 @@
 # Landing Zone variables
-lz_name                 = "example-lz"
-short_name              = "example"
-short_env               = "dev"
-env_name                = "development"
-vnet_address_prefix     = "10.0.0.0/16"
-eonid                   = "123456"
-project_name            = "my-project"
+lz_name = "example-lz"
+short_name = "example"
+short_env = "dev"
+env_name = "development"
+vnet_address_prefix = "10.0.0.0/16"
+eonid = "123456"
+project_name = "my-project"
+location = "eastus2"
 
-# NSG names
+# Subnets configuration
+subnets = {
+  apim = {
+    cidr = "10.0.1.0/24"
+    nsg_alias = "apim"
+    route_table_alias = "apim"
+    delegation_name = "" # Name of subnet delegation (if any)
+    delegation_sd_name = "" # Name of subnet delegation subnet (if any)
+    delegation_sd_action = [] # Actions for subnet delegation (if any)
+    service_endpoints = ["Microsoft.EventHub", "Microsoft.KeyVault", "Microsoft.Sql", "Microsoft.Storage"] # List of service endpoints for the subnet
+    enforce_private_link_service_network_policies = false # Whether to enforce private link service network policies
+    enforce_private_link_endpoint_network_policies = false # Whether to enforce private link endpoint network policies
+  }
+  private = {
+    cidr = "10.0.2.0/24"
+    nsg_alias = "private"
+    route_table_alias = "default"
+    delegation_name = "" # Name of subnet delegation (if any)
+    delegation_sd_name = "" # Name of subnet delegation subnet (if any)
+    delegation_sd_action = [] # Actions for subnet delegation (if any)
+    service_endpoints = [] # List of service endpoints for the subnet
+    enforce_private_link_service_network_policies = true # Whether to enforce private link service network policies
+    enforce_private_link_endpoint_network_policies = true # Whether to enforce private link endpoint network policies
+  }
+}
+
+# Map of NSG names
 nsg_names = {
-  apim    = "im-eastus2-test-apim-nsg-01"
+  apim = "im-eastus2-test-apim-nsg-01"
   private = "im-eastus2-test-pvt-nsg-01"
 }
 
-# Route table names
-rt_names = {
-  apim    = "im-eastus2-test-apim-rt-01"
-  default = "in-eastus2-test-default-rt-01"
-}
-
-# Swimlane UDR names
+# Map of Swimlane UDR names
 swimlane_udr_names = {
-  apim    = "im-eastus2-test-apim-rt-01"
-  default = "in-eastus2-test-default-rt-01"
+  apim = "im-eastus2-test-apim-rt-01"
+  private = "im-eastus2-test-pvt-rt-01"
 }
-
-# Subnet CIDRs
-subnet_cidrs = {
-  apim    = "10.0.1.0/24"
-  private = "10.0.2.0/24"
-}
-
-# Subnet NSG aliases
