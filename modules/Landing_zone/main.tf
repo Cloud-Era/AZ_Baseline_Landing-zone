@@ -1,6 +1,6 @@
 # Landing Zone module
 module "landing_zone" {
-  source = "github.com//terrafora-azure-component-landing-zone?ref=init"
+  source = "github.com/Eaton-Vance-Corp/terrafora-azure-component-landing-zone?ref=init"
 
   # Pass landing zone parameters
   eonid               = var.eonid
@@ -10,6 +10,15 @@ module "landing_zone" {
   short_env           = var.short_env
   env                 = var.env_name
   vnet_address_prefix = var.vnet_address_prefix
+
+  # Swimlane UDRs
+  swimlane_udrs = {
+    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
+      extra_templates = []
+      variables = {}
+      name = rt_name
+    }
+  }
 }
 
 # Subnets module
@@ -25,7 +34,7 @@ module "subnets" {
   # Tags for resources
   tags = {
     "app:project:eonid" = var.eonid
-    "app:project:name"  = "test-project"
+    "app:project:name"  = var.project_name
     "app:project:env"   = var.env_name
   }
 
@@ -61,11 +70,5 @@ module "subnets" {
   }
 
   # Swimlane UDRs
-  swimlane_udrs = {
-    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
-      extra_templates = []
-      variables = {}
-      name = rt_name
-    }
-  }
+  swimlane_udrs = module.landing_zone.swimlane_udrs
 }
