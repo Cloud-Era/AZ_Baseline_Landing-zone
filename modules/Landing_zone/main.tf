@@ -1,8 +1,10 @@
+# Landing Zone module
 module "landing_zone" {
-  source = "github.com/Eaton-Vance-Corp/terrafora-azure-component-landing-zone?ref=init"
+  source = "github.com//terrafora-azure-component-landing-zone?ref=init"
 
-  eonid               = local.eonid
-  location            = local.location
+  # Pass landing zone parameters
+  eonid               = var.eonid
+  location            = var.location
   lz_name             = var.lz_name
   short_name          = var.short_name
   short_env           = var.short_env
@@ -10,67 +12,60 @@ module "landing_zone" {
   vnet_address_prefix = var.vnet_address_prefix
 }
 
+# Subnets module
 module "subnets" {
-  source     = "github.com/Eaton-Vance-Corp/terrafora-azure-component-subnets?ref=init"
+  source     = "github.com//terrafora-azure-component-subnets?ref=init"
   depends_on = [module.landing_zone.systemrg_id]
 
+  # Pass subnet details
   system_ng_name = module.landing_zone.systemrg_name
   vnet_name      = module.landing_zone.vnet_name
   env            = var.env_name
 
+  # Tags for resources
   tags = {
-    "app:project:eonid" = local.eonid
+    "app:project:eonid" = var.eonid
     "app:project:name"  = "test-project"
     "app:project:env"   = var.env_name
   }
 
-  location = local.location
+  # Location
+  location = var.location
 
+  # Subnet configurations
   subnets_info = [
-    for i in range(length(var.subnet_names)) : {
-      subnet_name                           = var.subnet_names[i]
-      cidr                                  = var.subnet_cidrs[i]
-      nsg_alias                             = var.subnet_nsg_aliases[i]
-      route_table_alias                     = var.subnet_route_table_aliases[i]
+    for subnet_name, subnet in var.subnets : {
+      subnet_name                           = subnet_name
+      cidr                                  = subnet.cidr
+      nsg_alias                             = subnet.nsg_alias
+      route_table_alias                     = subnet.route_table_alias
       delegation_name                       = ""
       delegation_sd_name                    = ""
       delegation_sd_action                  = []
-      service_endpoints                     = var.subnet_service_endpoints[i]
-      enforce_private_link_service_network_policies = var.enforce_private_link_service_network_policies[i]
-      enforce_private_link_endpoint_network_policies = var.enforce_private_link_endpoint_network_policies[i]
+      service_endpoints                     = subnet.service_endpoints
+      enforce_private_link_service_network_policies = subnet.enforce_private_link_service_network_policies
+      enforce_private_link_endpoint_network_policies = subnet.enforce_private_link_endpoint_network_policies
     }
   ]
 
+  # NSG services configuration
   nsg_services = {
-    apim = {
+    for subnet_name, nsg_name in var.subnets : subnet_name => {
       extra_templates = []
       variables = {
-        apim_cidr = var.apim_cidr
-        ase_cidr  = var.ase_cidr
+        cidr = var.subnets[subnet_name].cidr
+        ase_cidr  = var.subnets[subnet_name].cidr
       }
-      name = "im-eastus2-test-apim-nsg-01"
-    },
-    private = {
-      extra_templates = []
-      variables = {
-        private_cidr = var.private_cidr
-        apim_cidr    = var.apim_cidr
-        ase_cidr     = var.ase_cidr
-      }
-      name = "im-eastus2-test-pvt-nsg-01"
+      name = var.nsg_names[subnet_name]
     }
   }
 }
 
+# Swimlane UDRs
 swimlane_udrs = {
-  apim = {
+  for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
     extra_templates = []
     variables = {}
-    name = "im-eastus2-test-apim-rt-01"
-  },
-  default = {
-    extra_templates = []
-    variables = {}
-    name = "in-eastus2-test-default-rt-01"
+    name = rt_name
   }
 }
