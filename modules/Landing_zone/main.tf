@@ -14,7 +14,7 @@ module "landing_zone" {
 
 # Subnets module
 module "subnets" {
-  source     = "github.com//terrafora-azure-component-subnets?ref=init"
+  source     = "github.com/Eaton-Vance-Corp/terrafora-azure-component-subnets?ref=init"
   depends_on = [module.landing_zone.systemrg_id]
 
   # Pass subnet details
@@ -59,13 +59,13 @@ module "subnets" {
       name = var.nsg_names[subnet_name]
     }
   }
-}
 
-# Swimlane UDRs
-swimlane_udrs = {
-  for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
-    extra_templates = []
-    variables = {}
-    name = rt_name
+  # Swimlane UDRs
+  swimlane_udrs = {
+    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
+      extra_templates = []
+      variables = {}
+      name = rt_name
+    }
   }
 }
