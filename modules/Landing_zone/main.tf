@@ -10,15 +10,6 @@ module "landing_zone" {
   short_env           = var.short_env
   env                 = var.env_name
   vnet_address_prefix = var.vnet_address_prefix
-
-  # Swimlane UDRs
-  swimlane_udrs = {
-    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
-      extra_templates = []
-      variables = {}
-      name = rt_name
-    }
-  }
 }
 
 # Subnets module
@@ -48,9 +39,9 @@ module "subnets" {
       cidr                                  = subnet.cidr
       nsg_alias                             = subnet.nsg_alias
       route_table_alias                     = subnet.route_table_alias
-      delegation_name                       = ""
-      delegation_sd_name                    = ""
-      delegation_sd_action                  = []
+      delegation_name                       = subnet.delegation_name
+      delegation_sd_name                    = subnet.delegation_sd_name
+      delegation_sd_action                  = subnet.delegation_sd_action
       service_endpoints                     = subnet.service_endpoints
       enforce_private_link_service_network_policies = subnet.enforce_private_link_service_network_policies
       enforce_private_link_endpoint_network_policies = subnet.enforce_private_link_endpoint_network_policies
@@ -70,5 +61,11 @@ module "subnets" {
   }
 
   # Swimlane UDRs
-  swimlane_udrs = module.landing_zone.swimlane_udrs
+  swimlane_udrs = {
+    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
+      extra_templates = []
+      variables = {}
+      name = rt_name
+    }
+  }
 }
