@@ -1,45 +1,36 @@
-# Landing Zone variables
-lz_name                 = "example-lz"
-short_name              = "example"
-short_env               = "dev"
-env_name                = "development"
-vnet_address_prefix     = "10.0.0.0/16"
-eonid                   = "123456"
+eonid = "your_eon_id"
+location = "your_location"
+lz_name = "your_lz_name"
+short_name = "your_short_name"
+short_env = "your_short_env"
+env_name = "your_env_name"
+vnet_address_prefix = "your_vnet_address_prefix"
 
-# Subnets configurations
 subnets = {
-  apim = {
-    cidr                                   = "10.0.1.0/24"
-    nsg_alias                              = "apim"
-    route_table_alias                      = "apim"
-    service_endpoints                      = ["Microsoft.EventHub", "Microsoft.KeyVault", "Microsoft.Sql", "Microsoft.Storage"]
-    enforce_private_link_service_network_policies = false
-    enforce_private_link_endpoint_network_policies = false
+  "subnet1" = {
+    cidr = "subnet1_cidr"
+    nsg_alias = "subnet1_nsg_alias"
+    route_table_alias = "subnet1_route_table_alias"
+    service_endpoints = ["service_endpoint1", "service_endpoint2"]
+    enforce_private_link_service_network_policies = "false"
+    enforce_private_link_endpoint_network_policies = "false"
   }
-  private = {
-    cidr                                   = "10.0.2.0/24"
-    nsg_alias                              = "private"
-    route_table_alias                      = "default"
-    service_endpoints                      = []
-    enforce_private_link_service_network_policies = true
-    enforce_private_link_endpoint_network_policies = true
+  "subnet2" = {
+    cidr = "subnet2_cidr"
+    nsg_alias = "subnet2_nsg_alias"
+    route_table_alias = "subnet2_route_table_alias"
+    service_endpoints = ["service_endpoint3", "service_endpoint4"]
+    enforce_private_link_service_network_policies = "true"
+    enforce_private_link_endpoint_network_policies = "true"
   }
 }
 
-# NSG names
 nsg_names = {
-  apim    = "apim-nsg"
-  private = "private-nsg"
+  "subnet1" = "nsg_name_subnet1"
+  "subnet2" = "nsg_name_subnet2"
 }
 
-# Route table names
-rt_names = {
-  apim    = "apim-rt"
-  default = "default-rt"
-}
-
-# Swimlane UDR names
 swimlane_udr_names = {
-  apim    = "apim-udr"
-  default = "default-udr"
+  "udr1" = "im-eastus2-test-apim-rt-01"
+  "udr2" = "in-eastus2-test-default-rt-01"
 }
