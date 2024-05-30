@@ -28,14 +28,53 @@ variable "eonid" {
   type        = string
 }
 
-variable "subnets" {
-  description = "Map of subnets"
-  type = map(object({
-    cidr                                   = string
-    nsg_alias                              = string
-    route_table_alias                      = string
-    service_endpoints                      = list(string)
-    enforce_private_link_service_network_policies = bool
-    enforce_private_link_endpoint_network_policies = bool
-  }))
+variable "nsg_names" {
+  description = "Map of NSG names"
+  type        = map(string)
+}
+
+variable "rt_names" {
+  description = "Map of route table names"
+  type        = map(string)
+}
+
+variable "swimlane_udr_names" {
+  description = "Map of Swimlane UDR names"
+  type        = map(string)
+}
+
+variable "subnet_names" {
+  description = "List of subnet names"
+  type        = list(string)
+  default     = ["apim", "private"]
+}
+
+variable "subnet_cidrs" {
+  description = "Map of subnet CIDRs"
+  type        = map(string)
+}
+
+variable "subnet_nsg_aliases" {
+  description = "Map of subnet NSG aliases"
+  type        = map(string)
+}
+
+variable "subnet_route_table_aliases" {
+  description = "Map of subnet route table aliases"
+  type        = map(string)
+}
+
+variable "subnet_service_endpoints" {
+  description = "Map of subnet service endpoints"
+  type        = map(list(string))
+}
+
+variable "subnet_enforce_private_link_service_network_policies" {
+  description = "Map of subnet enforce private link service network policies"
+  type        = map(bool)
+}
+
+variable "subnet_enforce_private_link_endpoint_network_policies" {
+  description = "Map of subnet enforce private link endpoint network policies"
+  type        = map(bool)
 }
