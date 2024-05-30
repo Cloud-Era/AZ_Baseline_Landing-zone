@@ -6,7 +6,7 @@ env_name                = "development"
 vnet_address_prefix     = "10.0.0.0/16"
 eonid                   = "123456"
 
-# Subnets definition
+# Subnets configurations
 subnets = {
   apim = {
     cidr                                   = "10.0.1.0/24"
@@ -24,4 +24,22 @@ subnets = {
     enforce_private_link_service_network_policies = true
     enforce_private_link_endpoint_network_policies = true
   }
+}
+
+# NSG names
+nsg_names = {
+  apim    = "apim-nsg"
+  private = "private-nsg"
+}
+
+# Route table names
+rt_names = {
+  apim    = "apim-rt"
+  default = "default-rt"
+}
+
+# Swimlane UDR names
+swimlane_udr_names = {
+  apim    = "apim-udr"
+  default = "default-udr"
 }
