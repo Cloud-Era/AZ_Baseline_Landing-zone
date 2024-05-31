@@ -54,7 +54,7 @@ module "subnets" {
       extra_templates = []
       variables = {
         apim_cidr = var.subnets["apim"].cidr
-        ase_cidr  = var.subnets["apim"].cidr
+        ase_cidr  = var.subnets["ase"].cidr
       }
       name = var.nsg_names["apim"]
     },
@@ -63,7 +63,7 @@ module "subnets" {
       variables = {
         private_cidr = var.subnets["private"].cidr
         apim_cidr    = var.subnets["apim"].cidr
-        ase_cidr     = var.subnets["private"].cidr
+        ase_cidr     = var.subnets["ase"].cidr
       }
       name = var.nsg_names["private"]
     }
