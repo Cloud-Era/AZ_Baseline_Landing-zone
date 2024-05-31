@@ -14,7 +14,7 @@ location                = "eastus2"          # Azure region location
 subnets = {
   apim = {
     subnet_name                           = "im-eastus2-test-apim-snet-01"  # Name of the APIM subnet
-    cidr                                  = "10.0.1.0/24"                   # CIDR block for the APIM subnet
+    cidr                                  = "10.239.255.192/27"             # CIDR block for the APIM subnet
     nsg_alias                             = "apim"                          # Network Security Group alias for the APIM subnet
     route_table_alias                     = "apim"                          # Route table alias for the APIM subnet
     delegation_name                       = ""                              # Name of subnet delegation (if any)
@@ -26,7 +26,7 @@ subnets = {
   }
   private = {
     subnet_name                           = "im-eastus2-test-pvt-snet-01"   # Name of the private subnet
-    cidr                                  = "10.0.2.0/24"                   # CIDR block for the private subnet
+    cidr                                  = "10.239.255.240/28"             # CIDR block for the private subnet
     nsg_alias                             = "private"                       # Network Security Group alias for the private subnet
     route_table_alias                     = "default"                       # Route table alias for the private subnet
     delegation_name                       = ""                              # Name of subnet delegation (if any)
@@ -36,16 +36,29 @@ subnets = {
     enforce_private_link_service_network_policies = true                   # Whether to enforce private link service network policies
     enforce_private_link_endpoint_network_policies = true                  # Whether to enforce private link endpoint network policies
   }
+  ase = {
+    subnet_name                           = "im-eastus2-test-ase-snet-01"   # Name of the ASE subnet
+    cidr                                  = "10.239.255.224/28"             # CIDR block for the ASE subnet
+    nsg_alias                             = "ase"                           # Network Security Group alias for the ASE subnet
+    route_table_alias                     = "default"                       # Route table alias for the ASE subnet
+    delegation_name                       = ""                              # Name of subnet delegation (if any)
+    delegation_sd_name                    = ""                              # Name of subnet delegation subnet (if any)
+    delegation_sd_action                  = []                              # Actions for subnet delegation (if any)
+    service_endpoints                     = []                              # List of service endpoints for the ASE subnet
+    enforce_private_link_service_network_policies = true                   # Whether to enforce private link service network policies
+    enforce_private_link_endpoint_network_policies = true                  # Whether to enforce private link endpoint network policies
+  }
 }
 
 # Map of Network Security Group (NSG) names
 nsg_names = {
   apim = "im-eastus2-test-apim-nsg-01"       # NSG name for the APIM subnet
   private = "im-eastus2-test-pvt-nsg-01"     # NSG name for the private subnet
+  ase = "im-eastus2-test-ase-nsg-01"         # NSG name for the ASE subnet
 }
 
 # Map of User-Defined Route (UDR) names
 swimlane_udr_names = {
   apim = "im-eastus2-test-apim-rt-01"        # UDR name for the APIM subnet
-  default = "in-eastus2-test-default-rt-01"  # Default UDR name for other subnets
+  default = "im-eastus2-test-default-rt-01"  # Default UDR name for other subnets
 }
