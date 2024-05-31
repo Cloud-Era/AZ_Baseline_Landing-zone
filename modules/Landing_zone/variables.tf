@@ -65,3 +65,11 @@ variable "swimlane_udr_names" {
   description = "Map of User-Defined Route (UDR) names"
   type        = map(string)
 }
+variable "nsg_services" {
+  description = "Network Security Group (NSG) services configuration"
+  type        = map(object({
+    extra_templates = list(string)
+    variables       = map(any)
+    name            = string
+  }))
+}
