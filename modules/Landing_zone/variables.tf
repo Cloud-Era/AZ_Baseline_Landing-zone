@@ -41,7 +41,7 @@ variable "location" {
 }
 
 variable "subnets" {
-  description = "Map of subnets"
+  description = "Map of subnets with their configurations"
   type = map(object({
     subnet_name                           = string
     cidr                                  = string
@@ -57,11 +57,11 @@ variable "subnets" {
 }
 
 variable "nsg_names" {
-  description = "Map of NSG names"
+  description = "Map of Network Security Group (NSG) names"
   type        = map(string)
 }
 
 variable "swimlane_udr_names" {
-  description = "Map of Swimlane UDR names"
+  description = "Map of User-Defined Route (UDR) names"
   type        = map(string)
 }
