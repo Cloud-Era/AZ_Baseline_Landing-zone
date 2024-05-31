@@ -23,6 +23,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 
+### Changes Made:
+- Updated Terraform configuration for Azure Landing Zone and Subnets.
+- Added support for Network Security Group (NSG) services configuration.
+- Updated subnet configurations using a for loop.
+- Updated User-Defined Route (UDR) configurations for subnets.
+
+### Purpose:
+- Enhance the Terraform configuration to better manage Azure networking resources.
+- Improve scalability and maintainability of the infrastructure code.
+
+### Additional Information:
+- These changes ensure that the Azure Landing Zone and Subnets are configured according to the latest requirements and best practices.
+- All configurations have been thoroughly tested in the feature/azure-landing-zone-update branch.
 
 
 
