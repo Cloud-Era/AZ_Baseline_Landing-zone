@@ -1,8 +1,9 @@
-# Landing Zone module
+# Main Terraform configuration for Azure Landing Zone and Subnets
+
 module "landing_zone" {
   source = "github.com/Eaton-Vance-Corp/terrafora-azure-component-landing-zone?ref=init"
 
-  # Pass landing zone parameters
+  # Parameters for the landing zone module
   eonid               = var.eonid
   location            = var.location
   lz_name             = var.lz_name
@@ -12,30 +13,29 @@ module "landing_zone" {
   vnet_address_prefix = var.vnet_address_prefix
 }
 
-# Subnets module
 module "subnets" {
   source     = "github.com/Eaton-Vance-Corp/terrafora-azure-component-subnets?ref=init"
   depends_on = [module.landing_zone.systemrg_id]
 
-  # Pass subnet details
+  # Parameters for the subnets module
   system_ng_name = module.landing_zone.systemrg_name
   vnet_name      = module.landing_zone.vnet_name
   env            = var.env_name
 
-  # Tags for resources
+  # Resource tags
   tags = {
     "app:project:eonid" = var.eonid
     "app:project:name"  = var.project_name
     "app:project:env"   = var.env_name
   }
 
-  # Location
+  # Azure location
   location = var.location
 
-  # Subnet configurations
+  # Subnet configurations using for loop
   subnets_info = [
     for subnet_name, subnet in var.subnets : {
-      subnet_name                           = subnet_name
+      subnet_name                           = subnet.subnet_name
       cidr                                  = subnet.cidr
       nsg_alias                             = subnet.nsg_alias
       route_table_alias                     = subnet.route_table_alias
@@ -48,24 +48,38 @@ module "subnets" {
     }
   ]
 
-  # NSG services configuration
+  # Network Security Group (NSG) services configuration
   nsg_services = {
-    for subnet_name, nsg_name in var.subnets : subnet_name => {
+    apim = {
       extra_templates = []
       variables = {
-        cidr = var.subnets[subnet_name].cidr
-        ase_cidr  = var.subnets[subnet_name].cidr
+        apim_cidr = var.subnets["apim"].cidr
+        ase_cidr  = var.subnets["apim"].cidr
       }
-      name = var.nsg_names[subnet_name]
+      name = var.nsg_names["apim"]
+    },
+    private = {
+      extra_templates = []
+      variables = {
+        private_cidr = var.subnets["private"].cidr
+        apim_cidr    = var.subnets["apim"].cidr
+        ase_cidr     = var.subnets["private"].cidr
+      }
+      name = var.nsg_names["private"]
     }
   }
 
-  # Swimlane UDRs
+  # User-Defined Route (UDR) configurations for subnets
   swimlane_udrs = {
-    for udr_name, rt_name in var.swimlane_udr_names : udr_name => {
+    apim = {
       extra_templates = []
       variables = {}
-      name = rt_name
+      name = var.swimlane_udr_names["apim"]
+    },
+    default = {
+      extra_templates = []
+      variables = {}
+      name = var.swimlane_udr_names["default"]
     }
   }
 }
