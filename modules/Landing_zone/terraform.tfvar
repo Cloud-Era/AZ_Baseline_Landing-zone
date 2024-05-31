@@ -62,3 +62,24 @@ swimlane_udr_names = {
   apim = "im-eastus2-test-apim-rt-01"        # UDR name for the APIM subnet
   default = "im-eastus2-test-default-rt-01"  # Default UDR name for other subnets
 }
+
+# Network Security Group (NSG) services configuration
+nsg_services = {
+  apim = {
+    extra_templates = []
+    variables = {
+      apim_cidr = "10.239.255.192/27"
+      ase_cidr  = "10.239.255.224/28"
+    }
+    name = "im-eastus2-test-apim-nsg-01"
+  }
+  private = {
+    extra_templates = []
+    variables = {
+      private_cidr = "10.239.255.240/28"
+      apim_cidr    = "10.239.255.192/27"
+      ase_cidr     = "10.239.255.224/28"
+    }
+    name = "im-eastus2-test-pvt-nsg-01"
+  }
+}
