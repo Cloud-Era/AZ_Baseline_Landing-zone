@@ -1,7 +1,7 @@
 # Main Terraform configuration for Azure Landing Zone and Subnets
 
 module "landing_zone" {
-  source = "github.com/cloud era/terrafora-azure-component-landing-zone?ref=init"
+  source = "github.com/Eaton-Vance-Corp/terrafora-azure-component-landing-zone?ref=init"
 
   # Parameters for the landing zone module
   eonid               = var.eonid
@@ -14,7 +14,7 @@ module "landing_zone" {
 }
 
 module "subnets" {
-  source     = "github.com/cloud-era/terrafora-azure-component-subnets?ref=init"
+  source     = "github.com/Eaton-Vance-Corp/terrafora-azure-component-subnets?ref=init"
   depends_on = [module.landing_zone.systemrg_id]
 
   # Parameters for the subnets module
@@ -57,7 +57,7 @@ module "subnets" {
         ase_cidr  = var.subnets["ase"].cidr
       }
       name = var.nsg_names["apim"]
-    },
+    }
     private = {
       extra_templates = []
       variables = {
@@ -75,7 +75,7 @@ module "subnets" {
       extra_templates = []
       variables = {}
       name = var.swimlane_udr_names["apim"]
-    },
+    }
     default = {
       extra_templates = []
       variables = {}
