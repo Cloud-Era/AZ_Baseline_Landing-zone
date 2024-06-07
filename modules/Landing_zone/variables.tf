@@ -73,3 +73,20 @@ variable "nsg_services" {
     name            = string
   }))
 }
+variable "tenant_id" {
+  description = "The tenant ID of the Azure AD."
+  type        = string
+}
+
+variable "aad_groups" {
+  description = "Map of Azure AD group names to look up."
+  type        = map(string)
+}
+
+variable "role_assignments" {
+  description = "Map of role assignments, where keys are assignment names and values are objects containing scope, role definition name, and principal ID."
+  type = map(object({
+    scope                = string
+    role_definition_name = string
+    principal_id         = string
+  }))

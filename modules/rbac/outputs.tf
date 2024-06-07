@@ -1,14 +1,9 @@
-variable "scope" {
-  description = "Scope at which the role assignment is created."
-  type        = string
+output "group_id" {
+  description = "The ID of the Azure AD group."
+  value       = var.create_group ? azuread_group.rbac_group[0].object_id : data.azuread_group.existing_group[0].object_id
 }
 
-variable "role_definition_name" {
-  description = "Name of the role definition to assign."
-  type        = string
-}
-
-variable "principal_id" {
-  description = "ID of the principal to assign the role to."
-  type        = string
+output "role_assignments" {
+  description = "The role assignments."
+  value       = azurerm_role_assignment.role_assignment
 }
