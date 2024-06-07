@@ -104,3 +104,8 @@ variable "azure_ad_group_name" {
   type        = string
 }
 
+variable "scope" {
+  description = "The scope for role assignments."
+  type        = string
+  default     = var.create_rg ? azurerm_resource_group.example[0].id : null
+}
