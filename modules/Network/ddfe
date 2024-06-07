@@ -1,0 +1,117 @@
+import requests
+import json
+import os
+import datetime
+import shutil
+from github import Github
+
+# GitHub personal access token
+access_token = os.getenv('ACCESS_TOKEN')
+
+if not access_token:
+    raise ValueError("GitHub access token not set in environment variables")
+
+# GitHub organization name
+org_name = "cloud-era"
+
+# Create a GitHub instance
+g = Github(access_token)
+
+def export_sbom(owner, repo):
+    try:
+        url = f"https://api.github.com/repos/{owner}/{repo}/dependency-graph/sbom"
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"token {access_token}"
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Failed to export SBOM for {repo}. Status code: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error exporting SBOM for {repo}: {e}")
+        return None
+
+def save_sbom_to_file(sbom, filename):
+    try:
+        with open(filename, 'w') as f:
+            json.dump(sbom, f, indent=4)
+        print(f"SBOM exported successfully to {filename}")
+    except Exception as e:
+        print(f"Error saving SBOM to {filename}: {e}")
+
+def normalize_sbom(sbom):
+    """Remove fields that are not relevant for comparison."""
+    if isinstance(sbom, dict):
+        return {k: normalize_sbom(v) for k, v in sbom.items() if k not in {"created", "documentNamespace"}}
+    elif isinstance(sbom, list):
+        return [normalize_sbom(item) for item in sbom]
+    else:
+        return sbom
+
+def compare_sbom(repo_name, new_sbom, previous_sbom_folder):
+    previous_sbom_path = os.path.join(previous_sbom_folder, f"{repo_name}.json")
+    try:
+        with open(previous_sbom_path, 'r') as f:
+            old_sbom = json.load(f)
+            new_sbom_normalized = normalize_sbom(new_sbom)
+            old_sbom_normalized = normalize_sbom(old_sbom)
+            comparison_result = old_sbom_normalized != new_sbom_normalized
+            if comparison_result:
+                print(f"Difference detected for {repo_name}")
+            return comparison_result
+    except FileNotFoundError:
+        print(f"No previous SBOM found for {repo_name}. Treating as new.")
+        return True
+
+if __name__ == "__main__":
+    current_output_base = r'c:\sre\sbom'
+    current_date = datetime.datetime.now().strftime('%m-%d-%Y')
+    previous_date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%m-%d-%Y')
+    
+    previous_output_folder = os.path.join(current_output_base, f"{org_name}-{previous_date}", "full-repo")
+    current_output_folder = os.path.join(current_output_base, f"{org_name}-{current_date}")
+    full_repo_folder = os.path.join(current_output_folder, "full-repo")
+    delta_folder = os.path.join(current_output_folder, "delta")
+    current_folder = r'd:\sbom\current'
+
+    try:
+        org = g.get_organization(org_name)
+        print(f"Fetching repositories for organization: {org_name}")
+
+        os.makedirs(full_repo_folder, exist_ok=True)
+        os.makedirs(delta_folder, exist_ok=True)
+        os.makedirs(current_folder, exist_ok=True)
+
+        any_changes = False
+
+        for repo in org.get_repos():
+            print(f"Exporting SBOM for repository: {repo.full_name}")
+            sbom = export_sbom(org_name, repo.name)
+            if sbom:
+                # Save the new SBOM in the full-repo folder
+                full_repo_filename = os.path.join(full_repo_folder, f"{repo.name}.json")
+                save_sbom_to_file(sbom, full_repo_filename)
+
+                # Compare and potentially save in the delta folder
+                has_changed = compare_sbom(repo.name, sbom, previous_output_folder)
+                if has_changed:
+                    any_changes = True
+                    delta_filename = os.path.join(delta_folder, f"{repo.name}.json")
+                    save_sbom_to_file(sbom, delta_filename)
+
+        # Copy files from delta folder to current folder if there are any changes
+        if any_changes:
+            for file_name in os.listdir(delta_folder):
+                source_file = os.path.join(delta_folder, file_name)
+                destination_file = os.path.join(current_folder, file_name)
+                shutil.copyfile(source_file, destination_file)
+                print(f"Copied {file_name} to {current_folder}")
+        else:
+            print("No changes detected in any SBOMs.")
+            os.rmdir(delta_folder)  # Remove the delta folder if no changes were detected
+
+    except Exception as e:
+        print(f"Error fetching repositories: {e}")
