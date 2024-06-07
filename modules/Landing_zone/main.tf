@@ -91,27 +91,20 @@ resource "azurerm_resource_group" "example" {
 }
 
 # Azure AD group creation
-resource "azuread_group" "rbac_group" {
-  count            = var.create_group ? 1 : 0
-  display_name     = var.group_name
-  security_enabled = true
-}
+module "rbac" {
+  source       = "../rbac"
+  group_name   = var.group_name
+  create_group = var.create_group
 
-data "azuread_group" "existing_group" {
-  count        = var.create_group ? 0 : 1
-  display_name = var.group_name
-}
+  roles = var.roles
 
-# Role assignments
-resource "azurerm_role_assignment" "role_assignment" {
-  for_each = var.roles
+  subscription_id = var.subscription_id
+  rg_name         = var.create_rg ? azurerm_resource_group.example[0].name : var.rg_name
 
-  scope                = var.create_rg ? "${azurerm_resource_group.example[0].id}${each.value.scope}" : each.value.scope
-  role_definition_name = each.value.role_definition_name
-  principal_id         = var.create_group ? azuread_group.rbac_group[0].object_id : data.azuread_group.existing_group[0].object_id
+  scope = var.create_rg ? azurerm_resource_group.example[0].id : null
 
   depends_on = [
-    azurerm_resource_group.example,
+    azurerm_resource_group.example
     azuread_group.rbac_group,
     data.azuread_group.existing_group
   ]

@@ -98,7 +98,7 @@ variable "rg_name" {
   type        = string
 }
 
-variable "azure_ad_group_name " {
+variable "azure_ad_group_name" {
   description = "The name of the Azure AD group."
   type        = string
 }
