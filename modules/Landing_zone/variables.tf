@@ -73,11 +73,12 @@ variable "nsg_services" {
     name            = string
   }))
 }
-variable "create_rg" {
-  description = "Flag to determine whether to create a new resource group if it doesn't exist."
-  type        = bool
-  default     = true
+variable "rg_name" {
+  description = "The name of the resource group."
+  type        = string
+  default     = var.create_rg ? azurerm_resource_group.example[0].name : var.rg_name
 }
+
 
 variable "create_group" {
   description = "Flag to determine whether to create a new Azure AD group if it doesn't exist."

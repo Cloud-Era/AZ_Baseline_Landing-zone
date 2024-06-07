@@ -104,7 +104,7 @@ module "rbac" {
   scope = var.create_rg ? azurerm_resource_group.example[0].id : null
 
   depends_on = [
-    azurerm_resource_group.example
+    azurerm_resource_group.exam
     azuread_group.rbac_group,
     data.azuread_group.existing_group
   ]
