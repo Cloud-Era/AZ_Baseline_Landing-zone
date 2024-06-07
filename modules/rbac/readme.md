@@ -17,3 +17,16 @@ Outputs
 Name	Description
 group_id	The ID of the Azure AD group.
 role_assignments	Details of the role assignments.
+
+
+PR Title: Update RBAC configuration and Terraform modules
+
+Description:
+This PR updates the RBAC configuration and Terraform modules to ensure proper parameterization and description comments are added.
+
+Changes Made:
+- Updated RBAC configuration to include Azure AD group names and scoped role assignments.
+- Parameterized and added description comments to Terraform modules (main.tf), variables (variables.tf), and .tfvar files.
+- Updated PR merge request comments for clarity and completeness.
+
+Please review and merge at your earliest convenience. Thank you!

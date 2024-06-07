@@ -73,20 +73,33 @@ variable "nsg_services" {
     name            = string
   }))
 }
-variable "tenant_id" {
-  description = "The tenant ID of the Azure AD."
+variable "create_rg" {
+  description = "Flag to determine whether to create a new resource group if it doesn't exist."
+  type        = bool
+  default     = true
+}
+
+variable "create_group" {
+  description = "Flag to determine whether to create a new Azure AD group if it doesn't exist."
+  type        = bool
+  default     = true
+}
+
+variable "roles" {
+  description = "A map of roles to assign to the group, where keys are identifiers and values are role names."
+  type        = map(object({
+    scope                = string
+    role_definition_name = string
+  }))
+}
+
+variable "rg_name" {
+  description = "The name of the resource group."
   type        = string
 }
 
-variable "aad_groups" {
-  description = "Map of Azure AD group names to look up."
-  type        = map(string)
+variable "azure_ad_group_name " {
+  description = "The name of the Azure AD group."
+  type        = string
 }
 
-variable "role_assignments" {
-  description = "Map of role assignments, where keys are assignment names and values are objects containing scope, role definition name, and principal ID."
-  type = map(object({
-    scope                = string
-    role_definition_name = string
-    principal_id         = string
-  }))

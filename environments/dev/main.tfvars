@@ -83,19 +83,29 @@ module "subnets" {
     }
   }
 }
-tenant_id = "your-tenant-id"
-aad_groups = {
-  "Group1" = "group1-id"
-  "Group2" = "group2-id"
+create_rg = true
+create_group = true
+
+rg_name = "example-resource-group"
+your_subscription_id = "your-subscription-id"
+
+azure_ad_group_name = "cloud-deployment"
+
+rbac = {
+  "api_management_service_contributor" = {
+    scope                = "/subscriptions/${your_subscription_id}"
+    role_definition_name = "API Management Service Contributor"
+    description          = "Role assignment to allow management of API Management services at the subscription level."
+  },
+  "private_dns_zone_contributor" = {
+    scope                = "/subscriptions/${your_subscription_id}/resourceGroups/${rg_name}"
+    role_definition_name = "Private DNS Zone Contributor"
+    description          = "Role assignment to allow management of Private DNS zones in the specified resource group."
+  },
+  "reader" = {
+    scope                = "/subscriptions/${your_subscription_id}"
+    role_definition_name = "Reader"
+    description          = "Role assignment to grant read-only access to the entire subscription."
+  }
 }
 
-role_assignments = {
-  "Assignment1" = {
-    scope                = "/subscriptions/your-subscription-id/resourceGroups/your-rg"
-    role_definition_name = "Reader"
-    principal_id         = "principal1-id"
-  },
-  "Assignment2" = {
-    scope                = "/subscriptions/your-subscription-id/resourceGroups/your-rg"
-    role_definition_name = "Contributor"
-    principal_id         = "principal2-id"

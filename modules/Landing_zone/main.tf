@@ -83,3 +83,36 @@ module "subnets" {
     }
   }
 }
+# Resource group creation
+resource "azurerm_resource_group" "example" {
+  name     = var.rg_name
+  location = var.location
+  count    = var.create_rg ? 1 : 0
+}
+
+# Azure AD group creation
+resource "azuread_group" "rbac_group" {
+  count            = var.create_group ? 1 : 0
+  display_name     = var.group_name
+  security_enabled = true
+}
+
+data "azuread_group" "existing_group" {
+  count        = var.create_group ? 0 : 1
+  display_name = var.group_name
+}
+
+# Role assignments
+resource "azurerm_role_assignment" "role_assignment" {
+  for_each = var.roles
+
+  scope                = var.create_rg ? "${azurerm_resource_group.example[0].id}${each.value.scope}" : each.value.scope
+  role_definition_name = each.value.role_definition_name
+  principal_id         = var.create_group ? azuread_group.rbac_group[0].object_id : data.azuread_group.existing_group[0].object_id
+
+  depends_on = [
+    azurerm_resource_group.example,
+    azuread_group.rbac_group,
+    data.azuread_group.existing_group
+  ]
+}
