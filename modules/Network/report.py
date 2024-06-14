@@ -1,10 +1,12 @@
 import requests
+import csv
 from datetime import datetime, timedelta
 
 # Constants
 ORG = "your_organization"  # Replace with your GitHub organization name
 TOKEN = "your_personal_access_token"
 DAYS = 30
+OUTPUT_FILE = "prod_releases_report.csv"
 
 # Calculate the date 30 days ago
 since = (datetime.now() - timedelta(days=DAYS)).isoformat()
@@ -58,6 +60,7 @@ def generate_report(org, token, since):
     repos = fetch_repositories(org, token)
     for repo in repos:
         repo_name = repo['full_name']
+        print(f"Fetching workflow runs for repository: {repo_name}")  # Debug print
         runs = fetch_workflow_runs(repo_name, token, since)
         prod_releases = filter_production_releases(runs)
         for release in prod_releases:
@@ -73,9 +76,23 @@ def generate_report(org, token, since):
             })
     return report
 
+# Save the report to a CSV file
+def save_report_to_csv(report, output_file):
+    if report:  # Check if report is not empty
+        with open(output_file, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=[
+                'repository', 'id', 'name', 'event', 'status', 'conclusion', 'created_at', 'updated_at'
+            ])
+            writer.writeheader()
+            writer.writerows(report)
+        print(f"Report successfully saved to {output_file}")  # Confirmation message
+    else:
+        print("No production releases found to save.")
+
 # Generate the report
 report = generate_report(ORG, TOKEN, since)
 
-# Output the report
-for release in report:
-    print(release)
+# Save the report to a CSV file
+save_report_to_csv(report, OUTPUT_FILE)
+
+print(f"Report saved to {OUTPUT_FILE}")
