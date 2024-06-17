@@ -49,8 +49,10 @@ def fetch_workflow_runs(repo, token, since):
 # Filter production releases
 def filter_production_releases(runs):
     prod_releases = []
+    keywords = ['production', 'prod deployment']  # List of keywords to check
     for run in runs:
-        if run['conclusion'] == 'success' and 'production' in run['name'].lower():
+        # Check if the run was successful and if the name contains any of the keywords
+        if run['conclusion'] == 'success' and any(keyword in run['name'].lower() for keyword in keywords):
             prod_releases.append(run)
     return prod_releases
 
